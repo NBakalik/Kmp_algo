@@ -9,40 +9,40 @@ public class Kmp {
             System.out.println("Wrong input");
         }
 
-        int[] lsp = computeLspTable(pattern);
+        int[] longestSuffixPrefix = computeLspTable(pattern);
 
-        int i = 0;
-        int j = 0;
-        while (i < text.length()) {
-            if (pattern.charAt(j) == text.charAt(i)) {
-                j++;
-                i++;
+        int textPos = 0;
+        int patternPos = 0;
+        while (textPos < text.length()) {
+            if (pattern.charAt(patternPos) == text.charAt(textPos)) {
+                patternPos++;
+                textPos++;
             }
-            if (j == pattern.length()) {
-                System.out.println("Found pattern at index: " + (i - j));
-                j = lsp[j - 1];
+            if (patternPos == pattern.length()) {
+                System.out.println("Found pattern at index: " + (textPos - patternPos));
+                patternPos = longestSuffixPrefix[patternPos - 1];
             }
-            if (i < text.length() && pattern.charAt(j) != text.charAt(i)) {
-                if (j != 0)
-                    j = lsp[j - 1];
+            if (textPos < text.length() && pattern.charAt(patternPos) != text.charAt(textPos)) {
+                if (patternPos != 0)
+                    patternPos = longestSuffixPrefix[patternPos - 1];
                 else
-                    i++;
+                    textPos++;
             }
         }
     }
 
     public static int[] computeLspTable(String pattern) {
-        int[] lsp = new int[pattern.length()];
-        lsp[0] = 0;
-        for (int i = 1; i < pattern.length(); i++) {
-            int j = lsp[i - 1];
-            while (j > 0 && pattern.charAt(i) != pattern.charAt(j))
-                j = lsp[j - 1];
-            if (pattern.charAt(i) == pattern.charAt(j))
-                j++;
-            lsp[i] = j;
+        int[] longestSuffixPrefix = new int[pattern.length()];
+        longestSuffixPrefix[0] = 0;
+        for (int suffixPos = 1; suffixPos < pattern.length(); suffixPos++) {
+            int suffixLen = longestSuffixPrefix[suffixPos - 1];
+            while (suffixLen > 0 && pattern.charAt(suffixPos) != pattern.charAt(suffixLen))
+                suffixLen = longestSuffixPrefix[suffixLen - 1];
+            if (pattern.charAt(suffixPos) == pattern.charAt(suffixLen))
+                suffixLen++;
+            longestSuffixPrefix[suffixPos] = suffixLen;
         }
-        return lsp;
+        return longestSuffixPrefix;
     }
 
     public static void main(String[] args) {
